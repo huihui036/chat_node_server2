@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="text" id="names">
+    <button id="bt">lai</button>
+    <br />
+    <input type="text" id="texts">
+    <button id="send">发送</button>
+
+</body>
+<script>
+
+    var texts = document.getElementById("texts")
+    // console.log(ipname.value)
+    var send = document.getElementById("send")
+
+    var bt = document.getElementById("bt")
+
+    var names = document.getElementById("names")
+
+    ws = null
+
+
+    bt.onclick = function () {
+        ws = new WebSocket('ws://127.0.0.1:3001')
+        console.log("连接成")
+
+
+        ws.onopen = function () {
+            console.log("12345646")
+            ws.send(JSON.stringify(
+                {
+                    type: "setname",
+                    name: names.value
+                }
+            ))
+        }
+
+        send.onclick = function () {
+            ws.send(JSON.stringify({
+                text: texts.value,
+                type: "textsay"
+            }))
+        }
+        
+        ws.onmessage = function (e) {
+            console.log(e.data)
+            var p = document.createElement("P")
+            p.innerHTML = e.data
+            document.body.appendChild(p)
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+</html>

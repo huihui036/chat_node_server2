@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h5>注册</h5>
+
+    <form action="http://127.0.1.1:3001/register" method="POST">
+    <input type="text"  placeholder="邮箱" name="email">
+    <input type="text"  laceholder="用户" name="username">
+    <input type="password"  laceholder="密码" name="password">
+    <input type="submit">
+    </form>
+<hr>
+
+    <h5>登入</h5>
+
+    <form action="http://127.0.1.1:3001/login" method="POST">
+ 
+    <input type="text" value="用户" name="username">
+    <input type="password" value="密码" name="password">
+    <input type="submit">
+    </form>
+
+    <hr>
+
+    <h5>二维码</h5>
+    <p>假设已经登入状态,登入的用户名是：h</p>
+    <form action="http://127.0.1.1:3001/getqr/h" method="get">
+ 
+       
+        <!-- <input type="submit" value="二维码"> -->
+
+      <img src="http://127.0.1.1:3001/getqr/h?">
+        </form>
+    </form>
+
+    <hr>
+
+    <h5>添加</h5>
+
+    <form action="http:127.0.0.1:3002/adduser/h" method="post">
+ 
+       <p>假设已经登入状态,登入的用户名是：h</p>
+     
+       当前登入的用户<input type="text" value="h" >
+       添加指定用户<input type="text" value="123456@qq.com" name="friendsemali">
+       <input type="submit">
+        </form>
+    
+    </form>
+
+
+    <hr>
+
+    <h5>文件</h5>
+
+    <form action="http:127.0.0.1:3006/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="logo">
+        <input type="submit" value="提交">
+    </form>
+
+    
+</body>
+<script>
+
+  
+
+</script>
+
+
+
+</html>
