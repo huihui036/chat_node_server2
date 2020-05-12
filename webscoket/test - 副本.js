@@ -18,27 +18,24 @@ var moment = require('moment');
 const path = require('path')
 const { Chat } = require('./module/chat')
 let usernamepath
-let firdensname
+let firdensname 
 let fiesmds = []
-
-
 const server = ws.createServer(function (conn) {
     console.log("启动服务器连接")
-
     conn.on("text", async function (str) {
         //  console.log("接收前端发送过来的数据：" + str)
         data = JSON.parse(str)
         fiesmds = data.filesmd5
-      
-        console.log("fiesmds.length1", data.filesmd5)
+        console.log("fiesmds.length1",fiesmds.length)
         //   console.log(data)
         conns['' + data.uid + ''] = conn;
-        console.log(conns)
+
         // let info = str
         if (data.privatechat == 2) {
             let isuser = users.some(item => {
                 return item.uid === data.uid
             })
+
             if (!isuser) {
                 users.push({
                     nickname: data.nickname,
@@ -46,14 +43,15 @@ const server = ws.createServer(function (conn) {
                     saytext: data.text
                 });
             }
+
             switch (data.type) {
                 // 用户名
                 case 'setname':
                     conn.nicname = data.nickname
                     usernamepath = conn.nicname,
-                        firdensname = data.firdensname,
-                        console.log(data.files)
-                      boardcast({
+                    firdensname = data.firdensname,
+                    console.log(data.files)
+                    boardcast({
                         privatechat: 2, //2  ==私聊
                         date: moment().format('YYYY-MM-DD HH:mm:ss'),
                         uid: data.uid,
@@ -70,52 +68,33 @@ const server = ws.createServer(function (conn) {
                     //广播出去
                     boardcast({
                         privatechat: 2,
-                        date: moment().format('YYYY-MM-DD HH:mm:ss'),
                         uid: data.uid,
                         nickname: data.nickname,
                         saytext: data.text,
                         type: "textsay",
-                        firdensname: data.firdensname,
-                        statacode: data.statacode,
-                        // 增加参数
-                        bridge: data.bridge
+                        firdensname: data.firdensname 
 
-                    })
-                    break
-                case 'withdrawtex':
-
-                    boardcast({
-                        privatechat: 2,
-                        date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                        uid: data.uid,
-                        nickname: data.nickname,
-                        saytext: data.text,
-                        type: "withdrawtex",
-                        firdensname: data.firdensname,
-                        statacode: data.statacode
                     })
                     break
             }
         }
 
 
-
     })
 
-    // conn.on("close", function () {
-    //     boardcast({
-    //         'nickname': data.nickname,
-    //         'msg': '退出了聊天'
-    //     })
-    // })
+    conn.on("close", function () {
+        boardcast({
+            'nickname': data.nickname,
+            'msg': '退出了聊天'
+        })
+    })
 
     conn.on("error", function (err) {
         console.log(err)
     })
 
-
-
 })
+
 
 app.post('/uploads', async function (req, res, next) {
     var form = new formidable.IncomingForm();   //创建上传表单
@@ -129,20 +108,13 @@ app.post('/uploads', async function (req, res, next) {
             throw err;
         }
         //  console.log(fields, files)
-        console.log(files)
-
+        console.log(files.file.path)
         let path = files.file.path.split('public')[1]
-        fs.readFile(files.file.path, (err, datas) => {
-            console.log(datas.duration)
-        })
-
-        let names = path.split('mp3')[1]
-        console.log(names)
         boardcast({
             nickname: usernamepath,
-            urls: 'http://127.0.0.1:3001' + path,
+            urls: 'http://127.0.0.1:3001' +  path,
             type: 'mp3',
-            saytext: names,
+
         })
 
     })
@@ -151,28 +123,21 @@ app.post('/uploads', async function (req, res, next) {
 
 // 单图/文件上传
 
-
 app.post('/upload', async function (req, res, next) {
-    // let a = await mds()
-
-    console.log("usernamepath", firdensname)
+    console.log("usernamepath",firdensname)
     var form = new formidable.IncomingForm();   //创建上传表单
     form.encoding = 'utf-8';        //设置编辑
     form.uploadDir = '../public';     //设置上传目录
     form.keepExtensions = true;     //保留后缀
     form.maxFieldsSize = 2 * 1024 * 1024;   //文件大小
-    // console.log(form)
-    //  console.log(fiesmds[0])
-    console.log("fiesmds.length", fiesmds.length)
+   // console.log(form)
+  //  console.log(fiesmds[0])
+  console.log("fiesmds.length",fiesmds.length)
     if (fiesmds.length >= 1) {
-        let amd5 = (fiesmds[0]).toString()
-        fiesmds = ''
-        console.log("amd5", amd5)
-        let md5 = await Chat.Findlistuser(amd5)
-        // console.log(fiesmds)
-        console.log(md5)
+        let md5 = await Chat.Findlistuser(fiesmds[0])
+        console.log(fiesmds)
         console.log(md5.length)
-        console.log("fiesmds[0]", amd5)
+
         if (md5.length <= 0) {
             form.parse(req, async function (err, fields, files) {
                 // console.log(fields);
@@ -192,28 +157,26 @@ app.post('/upload', async function (req, res, next) {
 
                 let urls = files.file.path.split('\\')[files.file.path.split('\\').length - 1]
                 // 保存到数据库
-                Chat.create({ username: usernamepath, saytext: 'http://127.0.0.1:3001/' + urls, fielsmd5: amd5, friend: firdensname })
-
+                Chat.create({ username: usernamepath, saytext: 'http://127.0.0.1:3001/' + urls, fielsmd5: fiesmds[0] ,friend: firdensname})
                 // console.log(fiesmds[0])
                 if (fielst == 0) {
                     //console.log("md5",md5)
                     webp.cwebp('../public/' + urls, '../public' + '/smale/' + urls + ".webp", "-q 80", function (status, error) {
                         console.log(status, error);
                         boardcast({
-                            date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                            
                             nickname: usernamepath,
                             saytext: naes,
                             imgurls: 'http://127.0.0.1:3001/' + urls,
                             urls: 'http://127.0.0.1:3001/' + 'smale/' + urls + '.webp',
                             type: types,
                             fielst: fielst,
-                            firdensname: firdensname,
+                            firdensname:firdensname ,
                         })
                     });
                 } else {
 
                     boardcast({
-                        date: moment().format('YYYY-MM-DD HH:mm:ss'),
                         nickname: usernamepath,
                         saytext: naes,
                         urls: 'http://127.0.0.1:3001/' + urls,
@@ -226,19 +189,11 @@ app.post('/upload', async function (req, res, next) {
 
         } else {
             boardcast({
-                date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 nickname: usernamepath,
                 saytext: "文件已经存在",
                 type: "textsay"
             })
         }
-    } else {
-        boardcast({
-            date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            nickname: usernamepath,
-            saytext: "文件发送失败",
-            type: "textsay"
-        })
     }
 
 });
@@ -248,13 +203,12 @@ function boardcast(obj) {
     // bridge用来实现一对一的主要参数
     //console.log(obj)
     if (obj.bridge && obj.bridge.length == 2) {
-          console.log("obj.bridge",obj.bridge)
-
-
+        //   console.log(obj.bridge)
         obj.bridge.forEach(item => {
             console.log("intm:", item)
-         conns[item.toString()].sendText(JSON.stringify(obj));
-  
+
+            conns[item].sendText(JSON.stringify(obj));
+
         })
         return;
     } else {
