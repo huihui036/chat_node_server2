@@ -7,10 +7,19 @@ let users = [];
 let conns = {};
 
 var express = require('express');
-
-var formidable = require('formidable');
-
 var app = express();
+var formidable = require('formidable'); 
+
+//设置允许跨域访问该服务.
+app.all('*', function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Methods', '*');
+    res.header('Content-Type', 'application/json;charset=utf-8');
+    next();
+  });
+
 
 //格式化时间
 var moment = require('moment');
@@ -19,7 +28,7 @@ const path = require('path')
 const { Chat } = require('./module/chat')
 let usernamepath
 let firdensname
-let fiesmds = []
+let fiesmds 
 
 
 const server = ws.createServer(function (conn) {
@@ -114,8 +123,9 @@ const server = ws.createServer(function (conn) {
     })
 
 
-
 })
+
+
 
 app.post('/uploads', async function (req, res, next) {
     var form = new formidable.IncomingForm();   //创建上传表单
@@ -130,7 +140,6 @@ app.post('/uploads', async function (req, res, next) {
         }
         //  console.log(fields, files)
         console.log(files)
-
         let path = files.file.path.split('public')[1]
         fs.readFile(files.file.path, (err, datas) => {
             console.log(datas.duration)
@@ -138,8 +147,11 @@ app.post('/uploads', async function (req, res, next) {
 
         let names = path.split('mp3')[1]
         console.log(names)
+        Chat.create({ username: usernamepath, saytext: 'http://127.0.0.1:3001/' + path, friend: firdensname })
         boardcast({
             nickname: usernamepath,
+            firdensname: firdensname,
+            date: moment().format('YYYY-MM-DD HH:mm:ss'),
             urls: 'http://127.0.0.1:3001' + path,
             type: 'mp3',
             saytext: names,
@@ -150,7 +162,6 @@ app.post('/uploads', async function (req, res, next) {
 
 
 // 单图/文件上传
-
 
 app.post('/upload', async function (req, res, next) {
     // let a = await mds()
@@ -165,15 +176,14 @@ app.post('/upload', async function (req, res, next) {
     //  console.log(fiesmds[0])
     console.log("fiesmds.length", fiesmds.length)
     if (fiesmds.length >= 1) {
-        let amd5 = (fiesmds[0]).toString()
-        fiesmds = ''
-        console.log("amd5", amd5)
-        let md5 = await Chat.Findlistuser(amd5)
+       // let amd5 = (fiesmds[0]).toString()
+      //  fiesmds = ''
+        console.log("amd5",  fiesmds)
+        let md5 = await Chat.Findlistuser(fiesmds)
         // console.log(fiesmds)
-        console.log(md5)
-        console.log(md5.length)
-        console.log("fiesmds[0]", amd5)
-        if (md5.length <= 0) {
+       
+  
+        if (md5.length == 0) {
             form.parse(req, async function (err, fields, files) {
                 // console.log(fields);
                 if (err) {
@@ -182,7 +192,7 @@ app.post('/upload', async function (req, res, next) {
                 // 判断文件类型为图片
                 let types = files.file.type.split('/')[1]
                 let fielst
-                if (types == 'png' || types == 'jpeg') {
+                if (types == 'png' || types == 'jpeg' || types == 'gif') {
                     fielst = 0
                 } else {
                     fielst = 1
@@ -192,7 +202,7 @@ app.post('/upload', async function (req, res, next) {
 
                 let urls = files.file.path.split('\\')[files.file.path.split('\\').length - 1]
                 // 保存到数据库
-                Chat.create({ username: usernamepath, saytext: 'http://127.0.0.1:3001/' + urls, fielsmd5: amd5, friend: firdensname })
+                Chat.create({ username: usernamepath, saytext: 'http://127.0.0.1:3001/' + urls, fielsmd5:fiesmds, friend: firdensname })
 
                 // console.log(fiesmds[0])
                 if (fielst == 0) {
@@ -213,8 +223,10 @@ app.post('/upload', async function (req, res, next) {
                 } else {
 
                     boardcast({
+                       
                         date: moment().format('YYYY-MM-DD HH:mm:ss'),
                         nickname: usernamepath,
+                        firdensname: firdensname,
                         saytext: naes,
                         urls: 'http://127.0.0.1:3001/' + urls,
                         type: types,
@@ -225,11 +237,24 @@ app.post('/upload', async function (req, res, next) {
             })
 
         } else {
+            console.log(md5[0].dataValues.saytext)
+            let a = md5[0].dataValues.saytext.split('.')
+            console.log(a[a.length-1])
+            fiestype =a[a.length-1]
+            let fielsts
+            if (fiestype == 'png' || fiestype == 'jpg' || fiestype == 'gif') {
+                fielsts = 0
+            } else {
+                fielsts = 1
+            }
             boardcast({
                 date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 nickname: usernamepath,
-                saytext: "文件已经存在",
-                type: "textsay"
+                firdensname: firdensname,
+                urls:md5[0].dataValues.saytext,
+                saytext: a[a.length-2]+'.'+fiestype,
+                type: fiestype,
+                fielst:fielsts
             })
         }
     } else {
@@ -250,7 +275,6 @@ function boardcast(obj) {
     if (obj.bridge && obj.bridge.length == 2) {
           console.log("obj.bridge",obj.bridge)
 
-
         obj.bridge.forEach(item => {
             console.log("intm:", item)
          conns[item.toString()].sendText(JSON.stringify(obj));
@@ -265,6 +289,5 @@ function boardcast(obj) {
 }
 
 //require("./module/chat")
-
 server.listen(3002)
 app.listen(3006);

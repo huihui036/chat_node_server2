@@ -25,10 +25,10 @@ router.post('/register', async (ctx,next) => {
 
   console.log(reemail)
     if(reemail){
-      ctx.body='邮箱被使用'
+      ctx.body={"msg":"邮箱已经被使用","code":"401"}
     } else{
       await User.create(user)
-      ctx.body='注册成功'
+      ctx.body={"msg":"注册成功","code":"201"}
     }
 
 })

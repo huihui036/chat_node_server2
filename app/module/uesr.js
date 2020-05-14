@@ -99,6 +99,7 @@ AddUser.init({
   },
   username: Sequelize.STRING,
   firendsname: Sequelize.STRING,
+  uid:Sequelize.INTEGER
 }, {
   sequelize,
   tableName: 'firend'

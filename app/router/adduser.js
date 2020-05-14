@@ -19,7 +19,7 @@ router.post("/adduser/:name", async (ctx, next) => {
     // 查找用户是否存在
 
     if (!body.friendsemali) {
-        ctx.body = { "err": "请输入用户邮箱" }
+        ctx.body = { "msg": "请输入用户邮箱","code":"401"}
         return
     }
 
@@ -30,31 +30,30 @@ router.post("/adduser/:name", async (ctx, next) => {
     })
 
     if (uemali == null) {
-        ctx.body = { "err": "没有该用户" }
+        ctx.body = { "msg": "没有该用户" ,"code":"403"}
         return
     }
 
     const adduser = {
-       // username: path.name,
-          username: 'e',
+        username: path.name,
+        uid : uemali.dataValues.id,
         firendsname: uemali.dataValues.username
     }
 
     const user = await AddUser.FindeslUser(adduser.username, adduser.firendsname)
 
-    //console.log("user："+user)
+    console.log("user：",user)
 
     if (user) {
+      
         await AddUser.create(adduser)
-        ctx.body = '添加好友成功'
+        ctx.body = { "msg": "添加成功","code":"201"}
     } else {
-        ctx.body = `${adduser.firendsname},已经是你的好友`
+
+        ctx.body ={"msg": `${adduser.firendsname},已经是你的好友`,"code":"203"} 
     }
 
 
-
-    //ctx.body = user
-    // await AddUser.create(adduser)
 
 
 
