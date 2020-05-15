@@ -99,13 +99,7 @@ router.post('/passname/:id',async (ctx,next)=>{
   
 })
 
-router.get('/qq',async (ctx,next)=>{
-   
-    // const username =ctx.params.names
-console.log("15645646586")
-  ctx.body = {"aa":"jkljafkla"}
-  
-})
+
 
    
 
