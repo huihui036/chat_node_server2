@@ -63,7 +63,7 @@ User.init({
   sequelize,
   tableName: 'user'
 })
-
+// 添加好友
 class AddUser extends Model {
   static async FindeslUser(username,firendsname){
     const fuser = await AddUser.findAll({
@@ -77,15 +77,31 @@ class AddUser extends Model {
       return fuser
     }
   }
-  
-  static async Findlistuser(username){
+  //查询好友列表
+  static async Findlistuser(username,stacode){
     const listuser = await AddUser.findAll({
       where: {
-        username: username
+        username: username,
+        stacode:stacode
       }
     })
     return listuser
   }
+
+  // 通过好友请求 修改 stacode
+  static async Passuser(id){
+    const listuser = await AddUser.update({
+      stacode: 1
+    },{
+      
+      where: {
+       id:id
+      }
+    })
+    return listuser
+  }
+
+
   
 
 }
@@ -99,7 +115,8 @@ AddUser.init({
   },
   username: Sequelize.STRING,
   firendsname: Sequelize.STRING,
-  uid:Sequelize.INTEGER
+  uid:Sequelize.INTEGER,
+  stacode:Sequelize.INTEGER,
 }, {
   sequelize,
   tableName: 'firend'
