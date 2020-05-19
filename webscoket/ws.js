@@ -8,7 +8,7 @@ let conns = {};
 
 var express = require('express');
 var app = express();
-var formidable = require('formidable'); 
+var formidable = require('formidable');
 
 //设置允许跨域访问该服务.
 app.all('*', function (req, res, next) {
@@ -18,7 +18,7 @@ app.all('*', function (req, res, next) {
     res.header('Access-Control-Allow-Methods', '*');
     res.header('Content-Type', 'application/json;charset=utf-8');
     next();
-  });
+});
 
 
 //格式化时间
@@ -28,7 +28,7 @@ const path = require('path')
 const { Chat } = require('./module/chat')
 let usernamepath
 let firdensname
-let fiesmds 
+let fiesmds
 
 
 const server = ws.createServer(function (conn) {
@@ -38,11 +38,11 @@ const server = ws.createServer(function (conn) {
         //  console.log("接收前端发送过来的数据：" + str)
         data = JSON.parse(str)
         fiesmds = data.filesmd5
-      
+
         console.log("fiesmds.length1", data.filesmd5)
         //   console.log(data)
         conns['' + data.uid + ''] = conn;
-        console.log(conns)
+        //  console.log(conns)
         // let info = str
         if (data.privatechat == 2) {
             let isuser = users.some(item => {
@@ -62,7 +62,7 @@ const server = ws.createServer(function (conn) {
                     usernamepath = conn.nicname,
                         firdensname = data.firdensname,
                         console.log(data.files)
-                      boardcast({
+                    boardcast({
                         privatechat: 2, //2  ==私聊
                         date: moment().format('YYYY-MM-DD HH:mm:ss'),
                         uid: data.uid,
@@ -86,7 +86,7 @@ const server = ws.createServer(function (conn) {
                         type: "textsay",
                         firdensname: data.firdensname,
                         statacode: data.statacode,
-                        userselfname:data.nickname,
+                        userselfname: data.nickname,
                         // 增加参数
                         bridge: data.bridge
 
@@ -129,12 +129,13 @@ const server = ws.createServer(function (conn) {
 
 
 app.post('/uploads', async function (req, res, next) {
+    console.log("123")
     var form = new formidable.IncomingForm();   //创建上传表单
     form.encoding = 'utf-8';        //设置编辑
     form.uploadDir = '../public/mp3';     //设置上传目录
     form.keepExtensions = true;     //保留后缀
     form.maxFieldsSize = 2 * 1024 * 1024;   //文件大小
-    console.log()
+
     form.parse(req, (err, fields, files) => {
         if (err) {
             throw err;
@@ -148,17 +149,19 @@ app.post('/uploads', async function (req, res, next) {
 
         let names = path.split('mp3')[1]
         console.log(names)
-        Chat.create({ username: usernamepath, saytext: 'http://127.0.0.1:3001/' + path, friend: firdensname })
+        console.log("usernamepath",usernamepath)
+        Chat.create({ username: usernamepath, saytext: 'http://172.30.92.220:3001/' + path, friend: firdensname })
+       
         boardcast({
             nickname: usernamepath,
             firdensname: firdensname,
             date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            urls: 'http://127.0.0.1:3001' + path,
+            urls: 'http://172.30.92.220:3001' + path,
             type: 'mp3',
-            userselfname:firdensname,
+            userselfname: usernamepath,
             saytext: names,
         })
-
+      
     })
 })
 
@@ -178,13 +181,13 @@ app.post('/upload', async function (req, res, next) {
     //  console.log(fiesmds[0])
     console.log("fiesmds.length", fiesmds.length)
     if (fiesmds.length >= 1) {
-       // let amd5 = (fiesmds[0]).toString()
-      //  fiesmds = ''
-        console.log("amd5",  fiesmds)
+        // let amd5 = (fiesmds[0]).toString()
+        //  fiesmds = ''
+        console.log("amd5", fiesmds)
         let md5 = await Chat.Findlistuser(fiesmds)
         // console.log(fiesmds)
-       
-  
+
+
         if (md5.length == 0) {
             form.parse(req, async function (err, fields, files) {
                 // console.log(fields);
@@ -204,7 +207,7 @@ app.post('/upload', async function (req, res, next) {
 
                 let urls = files.file.path.split('\\')[files.file.path.split('\\').length - 1]
                 // 保存到数据库
-                Chat.create({ username: usernamepath, saytext: 'http://127.0.0.1:3001/' + urls, fielsmd5:fiesmds, friend: firdensname })
+                Chat.create({ username: usernamepath, saytext: 'http://172.30.92.220:3001/' + urls, fielsmd5: fiesmds, friend: firdensname })
 
                 // console.log(fiesmds[0])
                 if (fielst == 0) {
@@ -215,25 +218,25 @@ app.post('/upload', async function (req, res, next) {
                             date: moment().format('YYYY-MM-DD HH:mm:ss'),
                             nickname: usernamepath,
                             saytext: naes,
-                            imgurls: 'http://127.0.0.1:3001/' + urls,
-                            urls: 'http://127.0.0.1:3001/' + 'smale/' + urls + '.webp',
+                            imgurls: 'http://172.30.92.220:3001/' + urls,
+                            urls: 'http://172.30.92.220:3001/' + 'smale/' + urls + '.webp',
                             type: types,
                             fielst: fielst,
                             firdensname: firdensname,
-                            userselfname:usernamepath,
+                            userselfname: usernamepath,
                         })
                     });
                 } else {
 
                     boardcast({
-                       
+
                         date: moment().format('YYYY-MM-DD HH:mm:ss'),
                         nickname: usernamepath,
                         firdensname: firdensname,
                         saytext: naes,
-                        urls: 'http://127.0.0.1:3001/' + urls,
+                        urls: 'http://172.30.92.220:3001/' + urls,
                         type: types,
-                        userselfname:usernamepath,
+                        userselfname: usernamepath,
                         fielst: fielst
                     })
                 }
@@ -243,8 +246,8 @@ app.post('/upload', async function (req, res, next) {
         } else {
             console.log(md5[0].dataValues.saytext)
             let a = md5[0].dataValues.saytext.split('.')
-            console.log(a[a.length-1])
-            fiestype =a[a.length-1]
+            console.log(a[a.length - 1])
+            fiestype = a[a.length - 1]
             let fielsts
             if (fiestype == 'png' || fiestype == 'jpg' || fiestype == 'gif') {
                 fielsts = 0
@@ -255,18 +258,18 @@ app.post('/upload', async function (req, res, next) {
                 date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 nickname: usernamepath,
                 firdensname: firdensname,
-                urls:md5[0].dataValues.saytext,
-                saytext: a[a.length-2]+'.'+fiestype,
+                urls: md5[0].dataValues.saytext,
+                saytext: a[a.length - 2] + '.' + fiestype,
                 type: fiestype,
-                userselfname:usernamepath,
-                fielst:fielsts
+                userselfname: usernamepath,
+                fielst: fielsts
             })
         }
     } else {
         boardcast({
             date: moment().format('YYYY-MM-DD HH:mm:ss'),
             nickname: usernamepath,
-            userselfname:usernamepath,
+            userselfname: usernamepath,
             saytext: "文件发送失败",
             type: "textsay"
         })
@@ -279,13 +282,13 @@ function boardcast(obj) {
     // bridge用来实现一对一的主要参数
     //console.log(obj)
     if (obj.bridge && obj.bridge.length == 2) {
-          console.log("obj.bridge",obj.bridge)
+        //  console.log("obj.bridge",obj.bridge)
         obj.bridge.forEach(item => {
             try {
-                console.log("intm:", item)
+                //   console.log("intm:", item)
                 conns[item.toString()].sendText(JSON.stringify(obj));
             } catch (error) {
-               console.log("对方不在线")
+                console.log("对方不在线")
             }
         })
         return;
@@ -298,4 +301,4 @@ function boardcast(obj) {
 
 //require("./module/chat")
 server.listen(3002)
-app.listen(3006);
+app.listen(3006); 
