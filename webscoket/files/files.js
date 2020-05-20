@@ -13,7 +13,6 @@ function getStat(path) {
     })
 }
 
-
 // 创建文件
 function mkdir(dir) {
     return new Promise((resolve, reject) => {
@@ -28,7 +27,6 @@ function mkdir(dir) {
 }
 
 // 判断路径是存在
-
 
 async function dirExists(dir) {
     let isExists = await getStat(dir);

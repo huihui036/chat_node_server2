@@ -73,7 +73,6 @@ router.post("/adduser/:name", async (ctx, next) => {
 
 }
 
-
 router.get('/fiends/:names',async (ctx,next)=>{
    
     const username =ctx.params.names
@@ -84,8 +83,11 @@ router.get('/fiends/:names',async (ctx,next)=>{
 
 router.get('/passname/:names',async (ctx,next)=>{
    
-    const username =ctx.params.names
-   let datase = await getriends(username,0)
+    const firendsname =ctx.params.names
+
+    //searchadduser
+   let datase =await AddUser.searchadduser(firendsname,0)
+
    ctx.body = datase
   
 })

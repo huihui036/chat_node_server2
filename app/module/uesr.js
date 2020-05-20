@@ -81,7 +81,17 @@ class AddUser extends Model {
   static async Findlistuser(username,stacode){
     const listuser = await AddUser.findAll({
       where: {
-        username: username,
+        username,
+        stacode:stacode
+      }
+    })
+    return listuser
+  }
+
+  static async searchadduser(username,stacode){
+    const listuser = await AddUser.findAll({
+      where: {
+        firendsname: username,
         stacode:stacode
       }
     })
