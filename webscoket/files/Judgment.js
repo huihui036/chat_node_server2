@@ -1,9 +1,7 @@
 var formidable = require('formidable');
 var moment = require('moment');
 class Judgment {
-    constructor(types) {
-        this.types = types
-    }
+    constructor(types) {this.types = types}
     // 文件判断
     static judgment(types) {
         let filetype = ['png', 'jpeg', 'gif', 'jpg']
@@ -15,11 +13,10 @@ class Judgment {
     }
 
 }
+// 文件上传
 class Setflie {
-    constructor(paht) {
-        paht = this.paht
-    }
-    // 文件判断
+    constructor(paht) {paht = this.paht}
+
     static fliespath(paht) {
         var form = new formidable.IncomingForm();   //创建上传表单
         form.encoding = 'utf-8';        //设置编辑
@@ -30,19 +27,18 @@ class Setflie {
     }
 
 }
-   // 返回数据
+// 返回数据
 class ReturnJosn {
-    constructor(datas) {
-        datas = this.datas
-    }
+    constructor(datas) {datas = this.datas}
     static retunjson(datas) {
         let BoardDate = {
             date: moment().format('YYYY-MM-DD HH:mm:ss'),
             uid: datas.uid,
             nickname: datas.nickname,
-            firdensname: datas.firdensname,
+            fridensname: datas.fridensname,
             bridge: datas.bridge,
             saytext: datas.text,
+            type:datas.type,
             userselfname: datas.nickname,
         }
         return BoardDate

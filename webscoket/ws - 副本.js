@@ -1,12 +1,9 @@
 const ws = require("nodejs-websocket");
 var fs = require('fs');
-
-var express = require('express');
-var app = express();
-
 let users = [];
 let conns = {};
-let Mydata
+var express = require('express');
+var app = express();
 // Judgment--文件类型判断   Setflie--文件上传, ReturnJosn---返回到前端的数据
 const { ReturnJosn} = require('./files/Judgment')
 const { Mpuploads } = require('./router/mpuploads')
@@ -19,9 +16,9 @@ app.all('*', function (req, res, next) {
     res.header('Content-Type', 'application/json;charset=utf-8');
     next();
 });
-
+const path = require('path')
 const { Chat } = require('./module/chat')
-
+let Mydata
 const server = ws.createServer(function (conn) {
     console.log("启动服务器连接")
     //Judgment.Judgment()
@@ -40,6 +37,7 @@ const server = ws.createServer(function (conn) {
             });
         }
         Mydata = data
+    // let BoardDate = retunjson(data)
         let BoardDate = ReturnJosn.retunjson(data)
         switch (data.type) {
             // 用户名
@@ -51,6 +49,7 @@ const server = ws.createServer(function (conn) {
             case 'textsay':
                 Chat.create({ username: data.nickname, saytext:data.text, friend:data.fridensname })
                 //广播出去
+
                 BoardDate.statacode = data.statacode
                 boardcast(BoardDate)
                 break
@@ -59,6 +58,17 @@ const server = ws.createServer(function (conn) {
                 boardcast(BoardDate)
                 break
         }
+
+    })
+
+    // conn.on("close", function () {
+    //     boardcast({
+    //         'nickname': data.nickname,
+    //         'msg': '退出了聊天'
+    //     })
+    // })
+    conn.on("error", function (err) {
+        console.log(err)
     })
 
 })
@@ -68,6 +78,7 @@ app.post('/uploads', async function (req, res, next) {
        let BoardDate = await Mpuploads.mp3upada(req,Mydata)
        boardcast(BoardDate)
 })
+
 // 单图/文件上传
 app.post('/upload', async function (req, res, next) {
     let BoardDate = await Mpuploads.filesupload(req,Mydata)
@@ -90,6 +101,7 @@ function boardcast(obj) {
         })
     }
 }
+
 //require("./module/chat")
 server.listen(3002)
 app.listen(3006); 

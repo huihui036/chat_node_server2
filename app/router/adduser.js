@@ -21,7 +21,6 @@ router.post("/adduser/:name", async (ctx, next) => {
         ctx.body = { "msg": "请输入用户邮箱","code":"401"}
         return
     }
-
     const uemali = await User.findOne({
         where: {
             email: body.friendsemali
@@ -32,7 +31,6 @@ router.post("/adduser/:name", async (ctx, next) => {
         ctx.body = { "msg": "没有该用户" ,"code":"403"}
         return
     }
-
     const adduser = {
         username: path.name,
         uid : uemali.dataValues.id,
@@ -51,7 +49,6 @@ router.post("/adduser/:name", async (ctx, next) => {
 
         ctx.body ={"msg": `${adduser.firendsname},已经是你的好友`,"code":"203"} 
     }
-
 
 })
 
@@ -84,10 +81,8 @@ router.get('/fiends/:names',async (ctx,next)=>{
 router.get('/passname/:names',async (ctx,next)=>{
    
     const firendsname =ctx.params.names
-
     //searchadduser
    let datase =await AddUser.searchadduser(firendsname,0)
-
    ctx.body = datase
   
 })
@@ -102,8 +97,6 @@ router.post('/passname/:id',async (ctx,next)=>{
 })
 
 
-
-   
 
 
 module.exports = { router }
