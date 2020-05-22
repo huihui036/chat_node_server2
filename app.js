@@ -2,6 +2,8 @@ const Koa = require('koa')
 var cors = require('koa-cors');
 const app = new Koa()
 
+//聊天服务模块
+const {server} = require('./webscoket/websocket')
 
 app.use(cors({
     origin:"*"
@@ -28,5 +30,8 @@ app.use(staticFiles(path.resolve(__dirname, "./public")))
 
 
 
+const Middlewares = require('./middlewares/exception')
+app.use(Middlewares)
 
+server.listen(3002)
 app.listen(3001)

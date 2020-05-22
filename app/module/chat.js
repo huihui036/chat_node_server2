@@ -1,8 +1,9 @@
 const { Sequelize, Model } = require('sequelize')
-const { sequelize } = require("../core/db/db")
+const { sequelize } = require("../../core/db/db")
+
 class Chat extends Model {
 
-  static async Findlistuser(fielsmd5){
+  static async Findlistfiles(fielsmd5){
     const fiels = await Chat.findAll({
       where: {
         fielsmd5: fielsmd5

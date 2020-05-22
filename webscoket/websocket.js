@@ -1,12 +1,12 @@
 const ws = require("nodejs-websocket");
-
 let users = [];
 let conns = {};
 let boardcastDate
 // Judgment--文件类型判断   Setflie--文件上传, ReturnJosn---返回到前端的数据
 const { ReturnJosn} = require('./files/globalclass')
 
-const { Chat } = require('./module/chat')
+//const { Chat } = require('./module/chat')
+const { Chat } = require('../app/module/chat')
 const server = ws.createServer(function (conn) {
     console.log("启动服务器连接")
     conn.on("text", async function (str) {
@@ -46,6 +46,13 @@ const server = ws.createServer(function (conn) {
                 break
         }
 
+    })
+    conn.on('error',(e)=>{
+        console.log('服务出错')
+    })
+    conn.on('close',()=>{
+        console.log('退出')
+       
     })
 
 })

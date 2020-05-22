@@ -2,7 +2,9 @@
 const Router = require('koa-router')
 const jwt = require('jsonwebtoken');
 
+
 const { User } = require('../module/uesr')
+const { HttpException } = require('../../core/http-exception')
 
 const privateKey = require("../../config/config").privateKey
 var router = new Router({
@@ -18,11 +20,12 @@ router.post('/register', async (ctx, next) => {
     password: body.password,
 
   }
-  const reemail = await User.findeEmali(user.email)
-  console.log(reemail)
-  if (reemail) {
-  
-    ctx.body = { "msg": "邮箱已经被使用", "code": "401" }
+  const Register = await new User().RegisterUser(user.email)
+  console.log(Register)
+  if (Register) {
+    // const error = new HttpException('错误信息',10001,400)
+    //throw error
+   ctx.body = { "msg": "邮箱已经被使用", "code": "401" }
   } else {
     await User.create(user)
     ctx.body = { "msg": "注册成功", "code": "201" }
@@ -37,7 +40,9 @@ router.post('/login', async (ctx, next) => {
     password: body.password,
   }
   console.log(user)
-  const users = await User.veriyEmali(user.username, user.password)
+  
+  const users = await new User().LoginPost(user.username, user.password)
+  // 生成tolen
   let token = jwt.sign({ username: body.username, password: body.password, }, privateKey, { expiresIn: 60 * 60 });
   // console.log(users);
   if (users.username) {
@@ -52,7 +57,5 @@ router.post('/login', async (ctx, next) => {
   }
 
 })
-
-
 
 module.exports = { router }

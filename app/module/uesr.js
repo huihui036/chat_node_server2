@@ -4,7 +4,7 @@ const { sequelize } = require("../../core/db/db")
 
 class User extends Model {
   //登入检查
-  static async veriyEmali (username, longpassword) {
+   async LoginPost (username, longpassword) {
     const user = await User.findOne({
       where: {
         username: username
@@ -21,9 +21,8 @@ class User extends Model {
     return user
 
   }
-  //注册检查
-  static async findeEmali(email){
-
+  //注册检查--查找用户是否存在
+   async RegisterUser(email){
     const emali = await User.findOne({
       where: {
         email: email
@@ -65,7 +64,7 @@ User.init({
 })
 // 添加好友
 class AddUser extends Model {
-  static async FindeslUser(username,firendsname){
+   async addUsers(username,firendsname){
     const fuser = await AddUser.findAll({
       where: {
         username: username,
@@ -77,8 +76,9 @@ class AddUser extends Model {
       return fuser
     }
   }
+
   //查询好友列表
-  static async Findlistuser(username,stacode){
+   async Findlistuser(username,stacode){
     const listuser = await AddUser.findAll({
       where: {
         username,
@@ -88,7 +88,8 @@ class AddUser extends Model {
     return listuser
   }
 
-  static async searchadduser(username,stacode){
+  //添加您为好友但是还没有通过的列表
+   async searchadduser(username,stacode){
     const listuser = await AddUser.findAll({
       where: {
         firendsname: username,
@@ -98,8 +99,9 @@ class AddUser extends Model {
     return listuser
   }
 
-  // 通过好友请求 修改 stacode
-  static async Passuser(id){
+  
+  // 通过好友请求 修改 stacode 0：未通过的
+   async Passuser(id){
     const listuser = await AddUser.update({
       stacode: 1
     },{
@@ -112,7 +114,6 @@ class AddUser extends Model {
   }
 
 
-  
 
 }
 // 用户好友表
