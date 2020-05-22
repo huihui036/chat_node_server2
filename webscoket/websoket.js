@@ -1,24 +1,10 @@
 const ws = require("nodejs-websocket");
 
-const Koa = require('koa'); // Koa 为一个class
-
-const app = new Koa();
-
-
-var cors = require('koa-cors');
-
 let users = [];
 let conns = {};
-let Mydata
+let boardcastDate
 // Judgment--文件类型判断   Setflie--文件上传, ReturnJosn---返回到前端的数据
-const { ReturnJosn} = require('./files/Judgment')
-const { Mpuploads } = require('./router/mpuploads')
-const {router} = require('./index')
-
-// //设置允许跨域访问该服务.
-app.use(cors({
-    origin:"*"
-}));
+const { ReturnJosn} = require('./files/globalclass')
 
 const { Chat } = require('./module/chat')
 const server = ws.createServer(function (conn) {
@@ -37,52 +23,45 @@ const server = ws.createServer(function (conn) {
                 saytext: data.text
             });
         }
-
-        Mydata = data
+      boardcastDate = data
         let BoardDate =new ReturnJosn().retunjson(data)
-        
         switch (data.type) {
-            // 用户名
+            // 用户名  --用户登入进入到聊天页面
             case 'setname':   
                 conn.nicname = data.nickname
                 boardcast(BoardDate)
                 break
-            // 聊天文字信息
+            // 用户聊天发送文字/表情信息
             case 'textsay':
+                // 聊天信息保存到数据库
                 Chat.create({ username: data.nickname, saytext:data.text, friend:data.fridensname })
                 //广播出去
                 BoardDate.statacode = data.statacode
                 boardcast(BoardDate)
                 break
+            // --用户撤回聊天信息
             case 'withdrawtex':
                 BoardDate.statacode = data.statacode
                 boardcast(BoardDate)
                 break
         }
+
     })
 
 })
 
+// boardcastDate(接收到的前端用户发送过来的信息) 暴露出去
+function Retunboardcastdata(){
+ return new Promise((resolve,reject)=>{
+    resolve(boardcastDate)
+ })
 
-app.use(router.routes())
+}
 
-//上传语音
-// router.post('/uploads', async (ctx, next)=> {
-//        let BoardDate =await new Mpuploads().mp3upada(ctx.req,Mydata) 
-//        boardcast(BoardDate)
-//        // ctx.body=''  没有多大意义但是不写前端发送请求会报404错误
-//        console.log("1233")
-//        ctx.body='123'
-       
-// })
-// // 单图/文件上传
-// router.post('/upload', async (ctx,next)=> {
-//     let BoardDate = await new Mpuploads().filesupload(ctx.req,Mydata)
-//     boardcast(BoardDate)
-//     ctx.body=''
-// });
+//消息广播出去方法
+async function boardcast(obj) {
+    //obj.bridge 前端发送有携带 bridge为私聊--否则进入群聊（发送信息所有在线用户可见）
 
-function boardcast(obj) {
     if (obj.bridge && obj.bridge.length == 2) {
         obj.bridge.forEach(item => {
             try {
@@ -99,6 +78,5 @@ function boardcast(obj) {
     }
 }
 
-//app.use(router.routes());
-server.listen(3002)
-app.listen(3006); 
+module.exports = {server,Retunboardcastdata,boardcast}
+

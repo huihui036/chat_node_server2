@@ -30,7 +30,7 @@ class User extends Model {
       }
     })
     if(emali){
-      return '邮箱已经被使用'
+      return '邮箱已经被使用l'
     }
 
   }

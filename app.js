@@ -3,7 +3,6 @@ var cors = require('koa-cors');
 const app = new Koa()
 
 
-
 app.use(cors({
     origin:"*"
 }));
@@ -26,5 +25,8 @@ InitManager.initCore(app)
 
 // 指定 public目录为静态资源目录，存放 images
 app.use(staticFiles(path.resolve(__dirname, "./public")))
+
+
+
 
 app.listen(3001)

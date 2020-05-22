@@ -11,9 +11,7 @@ var router = new Router({
 
 // 注册路由
 router.post('/register', async (ctx, next) => {
-
   const body = ctx.request.body
-
   const user = {
     email: body.email,
     username: body.username,
@@ -23,6 +21,7 @@ router.post('/register', async (ctx, next) => {
   const reemail = await User.findeEmali(user.email)
   console.log(reemail)
   if (reemail) {
+  
     ctx.body = { "msg": "邮箱已经被使用", "code": "401" }
   } else {
     await User.create(user)
@@ -52,13 +51,7 @@ router.post('/login', async (ctx, next) => {
     ctx.body = users
   }
 
-
 })
-
-
-
-
-
 
 
 
