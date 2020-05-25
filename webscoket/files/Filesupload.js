@@ -1,5 +1,5 @@
 var fs = require('fs');
-const { Chat } = require('../module/chat')
+const { Chat } = require('../../app/module/chat')
 let dourls = 'http://172.30.92.220:3001'
 // 图片压缩
 var webp = require('webp-converter');
@@ -12,7 +12,7 @@ class Filesupload {
     }
     // 语音上传
   async mp3upload(req, boarddate) {
-        let form = await new UplodaFlie().fliespath('../public/mp3')
+        let form = await new UplodaFlie().fliespath('./public/mp3')
         let BoardDate =new ReturnJosn().retunjson(boarddate)
         return new Promise((resolve, reject) => {
             form.parse(req, (err, fields, files) => {
@@ -39,14 +39,14 @@ class Filesupload {
     async filesupload(req, boarddate) {
         let fiesmds = boarddate.filesmd5
 
-        let form = await new UplodaFlie().fliespath('../public');
+        let form = await new UplodaFlie().fliespath('./public');
 
         let BoardDate = new ReturnJosn().retunjson(boarddate);
 
         return new Promise(async (resolve, reject) => {
             // fiesmds ：接收前端传过来的MD5 
             if (fiesmds.length >= 1) {
-                let md5 = await Chat.Findlistuser(fiesmds)
+                let md5 = await Chat.Findlistfiles(fiesmds)
                 // md5 查找数据库中是否存在： md5.length == 0：找不到该文件-->进行保存， 否则将数据库的对应的文件、图片直接放回到前端不对文件进行保存操作
                 if (md5.length == 0) {
                     form.parse(req, async function (err, fields, files) {
@@ -65,7 +65,12 @@ class Filesupload {
                         let urls = files.file.path.split('\\')[files.file.path.split('\\').length - 1]
 
                         // 保存到数据库
-                        Chat.create({ username: boarddate.nickname, saytext: dourls + '/' + urls, fielsmd5: fiesmds, friend: boarddate.fridensname })
+                        Chat.create({ 
+                            username: boarddate.nickname, 
+                            saytext: dourls + '/' + urls, 
+                            fielsmd5: fiesmds, 
+                            friend: boarddate.fridensname 
+                        })
                         // 数据返回
                       
                         let BoardDate = await new ReturnJosn().retunjson(boarddate)
@@ -75,7 +80,7 @@ class Filesupload {
 
                         //压缩图片保存- 到（smale目录 格式为.webp） fielst = 0：图片 
                         if (fielst == 0) {
-                            webp.cwebp('../public/' + urls, '../public' + '/smale/' + urls + ".webp", "-q 80", function (status, error) {
+                            webp.cwebp('./public/' + urls, './public' + '/smale/' + urls + ".webp", "-q 80", function (status, error) {
                                 // 原图的url
                                 BoardDate.imgurls = dourls + urls
                                 // 压缩后的url
@@ -104,6 +109,7 @@ class Filesupload {
                     BoardDate.saytext = gettype[gettype.length - 2] + '.' + filesTypes
                     BoardDate.type = filesTypes
                     BoardDate.fielst = fielsts
+                    
                     resolve(BoardDate)
                 }
             } else {

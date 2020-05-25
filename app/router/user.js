@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const { User } = require('../module/uesr')
 
+const { HttpException } = require('../../core/http-exception')
 const privateKey = require("../../config/config").privateKey
 var router = new Router({
 
@@ -21,8 +22,8 @@ router.post('/register', async (ctx, next) => {
   const reemail = await User.findeEmali(user.email)
   console.log(reemail)
   if (reemail) {
-  
-    ctx.body = { "msg": "邮箱已经被使用", "code": "401" }
+    const error = new HttpException('邮箱已经被使用')
+    throw error
   } else {
     await User.create(user)
     ctx.body = { "msg": "注册成功", "code": "201" }

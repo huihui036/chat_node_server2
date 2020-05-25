@@ -57,7 +57,6 @@ class ReturnJosn {
     }
 }
 
-
 module.exports = {
     Judgment,
     UplodaFlie,
