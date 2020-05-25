@@ -4,7 +4,6 @@ let conns = {};
 let boardcastDate
 // Judgment--文件类型判断   Setflie--文件上传, ReturnJosn---返回到前端的数据
 const { ReturnJosn} = require('./files/globalclass')
-
 //const { Chat } = require('./module/chat')
 const { Chat } = require('../app/module/chat')
 const server = ws.createServer(function (conn) {
@@ -56,7 +55,6 @@ const server = ws.createServer(function (conn) {
     })
 
 })
-
 // boardcastDate(接收到的前端用户发送过来的信息) 暴露出去
 function Retunboardcastdata(){
  return new Promise((resolve,reject)=>{

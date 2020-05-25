@@ -1,13 +1,6 @@
 const fs = require('fs')
 
-const Router = require('koa-router')
-const {Emoji} = require('../module/emoji')
-
-var router = new Router({
-
-});
-
-
+// 只执行一次
 
 /*
 // 读取表情包文件方法
@@ -42,8 +35,3 @@ router.get('/emo',async (ctx,next)=>{
 
 */
 
-router.get("/emoji", async(ctx,next)=>{
-   const da =  await Emoji.findAll()
-   ctx.body = da
-})
-module.exports={router}

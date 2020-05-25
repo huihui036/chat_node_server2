@@ -76,7 +76,6 @@ class AddUser extends Model {
       return fuser
     }
   }
-
   //查询好友列表
    async Findlistuser(username,stacode){
     const listuser = await AddUser.findAll({
@@ -99,7 +98,6 @@ class AddUser extends Model {
     return listuser
   }
 
-  
   // 通过好友请求 修改 stacode 0：未通过的
    async Passuser(id){
     const listuser = await AddUser.update({
@@ -113,15 +111,12 @@ class AddUser extends Model {
     return listuser
   }
 
-
-
 }
-// 用户好友表
 
 AddUser.init({
   id: {
     type: Sequelize.INTEGER,
-    primaryKey: true, // 主键  ==不能重复 不能为空
+    primaryKey: true, // 主键  
     autoIncrement: true  //自动增长
   },
   username: Sequelize.STRING,
