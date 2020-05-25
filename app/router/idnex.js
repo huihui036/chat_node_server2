@@ -16,6 +16,7 @@ router.post('/register', async (ctx) => await new UserController().register(ctx)
 router.post('/login', async (ctx, next) => await new UserController().login(ctx))
 
 
+
 //添加好友
 router.post("/adduser/:name", async (ctx, next) => await new AdduserFriend().Addusers(ctx))
 
