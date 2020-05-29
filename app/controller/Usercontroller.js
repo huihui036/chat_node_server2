@@ -6,7 +6,6 @@ const privateKey = require("../../config/config").privateKey
 
 const { AddUserError } = require('../../core/http-exception')
 
-
 const { User, AddUser } = require('../module/uesr')
 
 class UserController {

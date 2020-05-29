@@ -7,8 +7,10 @@ const { ReturnJosn} = require('./files/globalclass')
 //const { Chat } = require('./module/chat')
 const { Chat } = require('../app/module/chat')
 const server = ws.createServer(function (conn) {
+
     console.log("启动服务器连接")
     conn.on("text", async function (str) {
+        console.log(str)
         //  接收前端发送过来的数据--str
         data = JSON.parse(str)  
         conns['' + data.uid + ''] = conn;
@@ -51,7 +53,7 @@ const server = ws.createServer(function (conn) {
     })
     conn.on('close',()=>{
         console.log('退出')
-       
+     
     })
 
 })
