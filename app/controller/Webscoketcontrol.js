@@ -15,6 +15,15 @@ class Websockfiles {
         let boarddate = await Retunboardcastdata()
         let BoardDate = await new Filesupload().filesupload(ctx.req, boarddate)
         boardcast(BoardDate)
+        console.log(BoardDate)
+        ctx.body = ''
+    }
+
+      //测试
+      async viodece(ctx){
+        let boarddate = await Retunboardcastdata()
+        await new Filesupload().mp3uploadcs(ctx.req,boarddate)
+        boardcast(BoardDate)
         ctx.body = ''
     }
 }

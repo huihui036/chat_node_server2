@@ -1,5 +1,7 @@
 
 const Router = require('koa-router')
+const fs = require('fs')
+var formidable = require('formidable');
 
 const {Emoji} = require('../module/emoji')
 const {UserController, AdduserFriend} = require('../controller/Usercontroller')
@@ -33,7 +35,7 @@ router.get('/fiends/:names', async (ctx, next) => await new AdduserFriend().good
 
  
  //二维码生成
- router.get('/getqr/:username', async (ctx,next) => await new Qrimage().getqrimage(ctx))
+ router.get('/getqr/:username/:email', async (ctx,next) => await new Qrimage().getqrimage(ctx))
 
  // 聊天语音上传
  router.post('/uploads', async (ctx, next) => await new Websockfiles().voiceupload(ctx))
@@ -41,6 +43,14 @@ router.get('/fiends/:names', async (ctx, next) => await new AdduserFriend().good
 
  // 聊天图片，文件上传
  router.post('/upload', async (ctx, next) => await new Websockfiles().filesupload(ctx))
+
+ //临时测试
+
+
+ //router.post('/viode', async (ctx, next) =>await new Websockfiles().viodece(ctx))
+
+
+
 
 //表情包
 router.get("/emoji", async(ctx,next)=>{

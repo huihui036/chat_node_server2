@@ -3,16 +3,17 @@ let users = [];
 let conns = {};
 let boardcastDate
 // Judgment--文件类型判断   Setflie--文件上传, ReturnJosn---返回到前端的数据
-const { ReturnJosn} = require('./files/globalclass')
+const { ReturnJosn } = require('./files/globalclass')
 //const { Chat } = require('./module/chat')
 const { Chat } = require('../app/module/chat')
 const server = ws.createServer(function (conn) {
 
     console.log("启动服务器连接")
     conn.on("text", async function (str) {
-        console.log(str)
+          console.log(str)
         //  接收前端发送过来的数据--str
-        data = JSON.parse(str)  
+        data = JSON.parse(str)
+        console.log(data);
         conns['' + data.uid + ''] = conn;
         let isuser = users.some(item => {
             return item.uid === data.uid
@@ -24,18 +25,18 @@ const server = ws.createServer(function (conn) {
                 saytext: data.text
             });
         }
-      boardcastDate = data
-        let BoardDate =new ReturnJosn().retunjson(data)
+        boardcastDate = data
+        let BoardDate = new ReturnJosn().retunjson(data)
         switch (data.type) {
             // 用户名  --用户登入进入到聊天页面
-            case 'setname':   
+            case 'setname':
                 conn.nicname = data.nickname
                 boardcast(BoardDate)
                 break
             // 用户聊天发送文字/表情信息
             case 'textsay':
                 // 聊天信息保存到数据库
-                Chat.create({ username: data.nickname, saytext:data.text, friend:data.fridensname })
+                Chat.create({ username: data.nickname, saytext: data.text, friend: data.fridensname })
                 //广播出去
                 BoardDate.statacode = data.statacode
                 boardcast(BoardDate)
@@ -48,20 +49,20 @@ const server = ws.createServer(function (conn) {
         }
 
     })
-    conn.on('error',(e)=>{
+    conn.on('error', (e) => {
         console.log('服务出错')
     })
-    conn.on('close',()=>{
+    conn.on('close', () => {
         console.log('退出')
-     
+
     })
 
 })
 // boardcastDate(接收到的前端用户发送过来的信息) 暴露出去
-function Retunboardcastdata(){
- return new Promise((resolve,reject)=>{
-    resolve(boardcastDate)
- })
+function Retunboardcastdata() {
+    return new Promise((resolve, reject) => {
+        resolve(boardcastDate)
+    })
 
 }
 
@@ -85,5 +86,5 @@ async function boardcast(obj) {
     }
 }
 
-module.exports = {server,Retunboardcastdata,boardcast}
+module.exports = { server, Retunboardcastdata, boardcast }
 

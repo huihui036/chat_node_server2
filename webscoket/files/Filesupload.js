@@ -1,6 +1,6 @@
 var fs = require('fs');
 const { Chat } = require('../../app/module/chat')
-let dourls = 'http://172.30.92.220:3001'
+let dourls = 'http://172.30.92.36:3001'
 // 图片压缩
 var webp = require('webp-converter');
 // Judgment--文件类型判断   UplodaFlie--文件上传, ReturnJosn---返回到前端的数据
@@ -11,30 +11,70 @@ class Filesupload {
         boarddate = this.boarddate
     }
     // 语音上传
-  async mp3upload(req, boarddate) {
+    async mp3upload(req, boarddate) {
         let form = await new UplodaFlie().fliespath('./public/mp3')
-        let BoardDate =new ReturnJosn().retunjson(boarddate)
+        let BoardDate = new ReturnJosn().retunjson(boarddate)
         return new Promise((resolve, reject) => {
             form.parse(req, (err, fields, files) => {
                 if (err) {
-                    throw err;
+                    console.log("语音上传错误")
+
+                    //  throw err("语音上传错误");
+                } else {
+                    let path = files.file.path.split('public')[1]
+                    console.log(files.file.name);  //--
+                    fs.readFile(files.file.path, (err, datas) => {
+                        console.log(datas.duration)
+                    })
+                    let names = path.split('mp3')[1]
+                    // console.log(names)
+                    // 保存到数据库
+                    Chat.create({ username: boarddate.nickname, saytext: files.file.name, friend: boarddate.fridensname })  // dourls + path 修改成-files.file.name==
+
+                    path = path.replace("\\", "/")
+                    path = path.replace("\\", "/")
+                    console.log(path)
+                    BoardDate.urls = dourls + path
+                    BoardDate.saytext = files.file.name // names
+                    BoardDate.type = 'mp3'
+                    resolve(BoardDate)
                 }
-                let path = files.file.path.split('public')[1]
-                fs.readFile(files.file.path, (err, datas) => {
-                    console.log(datas.duration)
-                })
-                let names = path.split('mp3')[1]
-                // console.log(names)
-                // 保存到数据库
-                Chat.create({ username: boarddate.nickname, saytext: dourls + path, friend: boarddate.fridensname })
-                BoardDate.urls = dourls + path
-                BoardDate.saytext = names
-                BoardDate.type = 'mp3'
-                resolve(BoardDate)
+
             })
         })
 
+
     }
+
+    // 语音上传测试
+    //   async mp3uploadcs(req,boarddate) {
+    //     let form = await new UplodaFlie().fliespath('./public/mp3')
+    //     let BoardDate =new ReturnJosn().retunjson(boarddate)
+    //     return new Promise((resolve, reject) => {
+    //         form.parse(req, (err, fields, files) => {
+    //             if (err) {
+    //                 throw err;
+    //             }
+    //             let path = files.file.path.split('public')[1]
+    //             fs.readFile(files.file.path, (err, datas) => {
+    //                 console.log(datas.duration)
+    //             })
+    //          //   let names = path.split('mp3')[1]
+    //             // console.log(names)
+    //             // 保存到数据库
+    //           //  Chat.create({ username: boarddate.nickname, saytext: dourls + path, friend: boarddate.fridensname })
+    //          //   BoardDate.urls = dourls + path
+    //          //   BoardDate.saytext = names
+    //         //    BoardDate.type = 'mp3'
+    //             resolve(BoardDate)
+    //         })
+    //     })
+
+    // }
+
+
+
+
     // 图片文件
     async filesupload(req, boarddate) {
         let fiesmds = boarddate.filesmd5
@@ -54,27 +94,33 @@ class Filesupload {
                         if (err) {
                             return;
                         }
-                       
+
                         let filesType = files.file.type.split('/')[1]
-                        
+
+                        console.log("files.file.type", files.file.type)
+
                         // 判断文件类型为图片
                         let fielst = await new Judgment().judgment(filesType)
 
                         //     console.log(fiesmds[0])
                         let naes = files.file.name
+                        console.log(naes)
+                        let filesTypes = files.file.name.split(".")[files.file.name.split(".").length-1];
+                        console.log(filesTypes)
+                
                         let urls = files.file.path.split('\\')[files.file.path.split('\\').length - 1]
 
                         // 保存到数据库
-                        Chat.create({ 
-                            username: boarddate.nickname, 
-                            saytext: dourls + '/' + urls, 
-                            fielsmd5: fiesmds, 
-                            friend: boarddate.fridensname 
+                        Chat.create({
+                            username: boarddate.nickname,
+                            saytext: dourls + '/' + urls,
+                            fielsmd5: fiesmds,
+                            friend: boarddate.fridensname
                         })
                         // 数据返回
-                      
+
                         let BoardDate = await new ReturnJosn().retunjson(boarddate)
-                        BoardDate.type = filesType
+                        BoardDate.type = filesTypes
                         BoardDate.fielst = fielst
                         BoardDate.saytext = naes
 
@@ -109,7 +155,7 @@ class Filesupload {
                     BoardDate.saytext = gettype[gettype.length - 2] + '.' + filesTypes
                     BoardDate.type = filesTypes
                     BoardDate.fielst = fielsts
-                    
+
                     resolve(BoardDate)
                 }
             } else {

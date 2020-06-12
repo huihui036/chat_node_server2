@@ -1,9 +1,11 @@
 var qr = require('qr-image');
 class Qrimage {
   async  getqrimage(ctx) {
-        const path = ctx.params
+    const userdata = ctx.params
+
+       console.log(userdata)
         try {
-            var img = qr.image(`http:127.0.0.1/getaddu/${path.username}`, { size: 10 });
+            var img = qr.image(`{"emali":"${userdata.email}","user":"${userdata.username}"}`, { size: 10 });
             ctx.type = 'image/png';
             ctx.body = img;
 

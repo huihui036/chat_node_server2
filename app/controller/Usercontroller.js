@@ -49,6 +49,7 @@ class UserController {
             let returnuser = {
                 uid: users.id,
                 user: users.username,
+                email:users.email,
                 msg: 'Bearer ' + token
             }
             ctx.body = returnuser
@@ -86,11 +87,11 @@ class AdduserFriend {
         const adduser = {
             username: path.name,
             uid: uemali.dataValues.id,
-            firendsname: uemali.dataValues.username,
+            fridensname: uemali.dataValues.username,
             stacode: 0
         }
 
-        const user = await new AddUser().addUsers(adduser.username, adduser.firendsname)
+        const user = await new AddUser().addUsers(adduser.username, adduser.fridensname)
 
         console.log("user：", user)
 
@@ -100,7 +101,7 @@ class AdduserFriend {
             throw error
             //  ctx.body = { "msg": "发送成功，等待好友验证", "code": "201" }
         } else {
-            const error = new AddUserError(`${adduser.firendsname},已经是你的好友`, 102, 203)
+            const error = new AddUserError(`${adduser.fridensname},已经是你的好友`, 102, 203)
             throw error
 
         }
@@ -112,7 +113,7 @@ class AdduserFriend {
         if (fridendlist.length <= 0) {
             return {
                 "errs": "400",
-                "firendsname": "你还还没有好友"
+                "fridensname": "你还还没有好友"
             }
         } else {
 
@@ -129,9 +130,9 @@ class AdduserFriend {
     }
     // 未通过好友列表
     async userfiend(ctx) {
-        const firendsname = ctx.params.names
+        const fridensname = ctx.params.names
         //searchadduser
-        let datase = await new AddUser().searchadduser(firendsname, 0)
+        let datase = await new AddUser().searchadduser(fridensname, 0)
         ctx.body = datase
     }
     // 执行通过好友申请添加请求

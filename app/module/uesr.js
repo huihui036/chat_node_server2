@@ -64,11 +64,11 @@ User.init({
 })
 // 添加好友
 class AddUser extends Model {
-   async addUsers(username,firendsname){
+   async addUsers(username,fridensname){
     const fuser = await AddUser.findAll({
       where: {
         username: username,
-        firendsname:firendsname
+        fridensname:fridensname
       }
     })
     console.log(fuser.length)
@@ -91,7 +91,7 @@ class AddUser extends Model {
    async searchadduser(username,stacode){
     const listuser = await AddUser.findAll({
       where: {
-        firendsname: username,
+        fridensname: username,
         stacode:stacode
       }
     })
@@ -120,7 +120,7 @@ AddUser.init({
     autoIncrement: true  //自动增长
   },
   username: Sequelize.STRING,
-  firendsname: Sequelize.STRING,
+  fridensname: Sequelize.STRING,
   uid:Sequelize.INTEGER,
   stacode:Sequelize.INTEGER,
 }, {
