@@ -14,6 +14,7 @@
   "dependencies": {
     "@wabg/node-seaweedfs": "^1.4.7",
     "all": "0.0.0",
+    "amqplib": "^0.5.6",
     "baidu-aip-sdk": "^2.4.6",
     "bcryptjs": "^2.4.3",
     "crypto-js": "^4.0.0",
@@ -23,6 +24,7 @@
     "images": "^3.0.2",
     "ishrink": "^1.0.1",
     "jsonwebtoken": "^8.5.1",
+    "kafka-node": "^5.0.0",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.3.0",
     "koa-cors": "0.0.16",
@@ -42,6 +44,7 @@
     "sequelize": "^5.21.6",
     "ts-md5": "^1.2.7",
     "webp-converter": "^2.2.3",
+    "when": "^3.7.8",
     "ws": "^7.2.5"
   }
 }

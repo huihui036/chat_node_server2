@@ -1,5 +1,8 @@
 const bcry = require("bcryptjs")
+
+
 const { Sequelize, Model } = require('sequelize')
+const Op = Sequelize.Op;
 const { sequelize } = require("../../core/db/db")
 
 class User extends Model {
@@ -80,10 +83,15 @@ class AddUser extends Model {
    async Findlistuser(username,stacode){
     const listuser = await AddUser.findAll({
       where: {
-        username,
+    
+        [Op.or]: [{ username:username}, {fridensname: username}],
+     //   stacode:stacode,
+       
+       
         stacode:stacode
       }
     })
+    console.log(listuser)
     return listuser
   }
 
@@ -122,6 +130,7 @@ AddUser.init({
   username: Sequelize.STRING,
   fridensname: Sequelize.STRING,
   uid:Sequelize.INTEGER,
+  useruid:Sequelize.INTEGER,
   stacode:Sequelize.INTEGER,
 }, {
   sequelize,

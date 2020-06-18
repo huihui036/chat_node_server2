@@ -11,12 +11,7 @@ const Middlewares = async (ctx, next) => {
         errorstatus: error.errorCrcode,
         errpath: `${ctx.method}: ${ctx.path}`
       }
-    } else{
-      ctx.body = {
-        msg: "发生异常错误",
-       
-      }
-    }
+    } 
   }
 }
 module.exports = Middlewares

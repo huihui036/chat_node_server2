@@ -1,16 +1,25 @@
 const ws = require("nodejs-websocket");
+
+
+
 let users = [];
 let conns = {};
 let boardcastDate
+
 // Judgment--文件类型判断   Setflie--文件上传, ReturnJosn---返回到前端的数据
 const { ReturnJosn } = require('./files/globalclass')
 //const { Chat } = require('./module/chat')
 const { Chat } = require('../app/module/chat')
+
+//const { RabbitMQ } = require("../produce")
+
+//let mq= new RabbitMQ();
+
 const server = ws.createServer(function (conn) {
 
     console.log("启动服务器连接")
     conn.on("text", async function (str) {
-          console.log(str)
+        console.log(str)
         //  接收前端发送过来的数据--str
         data = JSON.parse(str)
         console.log(data);
@@ -36,10 +45,13 @@ const server = ws.createServer(function (conn) {
             // 用户聊天发送文字/表情信息
             case 'textsay':
                 // 聊天信息保存到数据库
-                Chat.create({ username: data.nickname, saytext: data.text, friend: data.fridensname })
+                Chat.create({ username: data.nickname, saytext: data.text, friend: data.fridensname, chatnumber: 1 })
                 //广播出去
                 BoardDate.statacode = data.statacode
                 boardcast(BoardDate)
+                // mq.sendQueueMsg('testQueue', `{ username:${data.nickname}, saytext: ${data.text}, friend: ${data.fridensname}, chatnumber: 1 }`, (error) => {
+                //     console.log(error)
+                // })
                 break
             // --用户撤回聊天信息
             case 'withdrawtex':
@@ -75,6 +87,9 @@ async function boardcast(obj) {
             try {
                 conns[item.toString()].sendText(JSON.stringify(obj));
             } catch (error) {
+
+                Chat.create({ username: obj.nickname, saytext: obj.saytext, friend: obj.fridensname, chatnumber: 0 })
+                console.log("内容", JSON.stringify(obj))
                 console.log("对方不在线")
             }
         })
